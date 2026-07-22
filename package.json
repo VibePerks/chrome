@@ -1,0 +1,31 @@
+{
+  "name": "vibeperks-chrome",
+  "displayName": "VibePerks for ChatGPT",
+  "version": "0.1.0",
+  "description": "VibePerks Chrome extension - a quiet sponsor line while an AI response is generating on chatgpt.com, so you earn credit while you wait.",
+  "publisher": "vibeperks",
+  "license": "PolyForm-Shield-1.0.0",
+  "homepage": "https://vibeperks.ai",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VibePerks/chrome.git"
+  },
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "node build.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "format:check": "prettier --check \"src/**/*.ts\" \"tests/**/*.ts\" \"build.mjs\""
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.287",
+    "@types/node": "^22.10.0",
+    "@vitest/coverage-v8": "^2.1.9",
+    "esbuild": "^0.24.0",
+    "jsdom": "^25.0.1",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.9"
+  }
+}

@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>VibePerks</title>
+    <style>
+      /* VibePerks light app tokens, mirrored from website/src/config.js. */
+      :root {
+        --bg: #f6f5fc;
+        --surface: #ffffff;
+        --surface-alt: #f1eefb;
+        --border: #e8e5f4;
+        --border-strong: #d7d2ea;
+        --text: #1a1826;
+        --muted: #6a6780;
+        --accent: #ffb800;
+        --on-accent: #0d0d0d;
+        --success: #22c55e;
+        --danger: #c62828;
+        --danger-bg: rgba(198, 40, 40, 0.08);
+        --shadow: 0 1px 2px rgba(26, 24, 38, 0.06), 0 8px 24px rgba(26, 24, 38, 0.06);
+        --sans: Inter, "Segoe UI", Helvetica, Arial, sans-serif;
+      }
+      body {
+        width: 336px;
+        margin: 0;
+        padding: 18px;
+        font: 13px/1.5 var(--sans);
+        background: var(--bg);
+        color: var(--text);
+      }
+      .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 18px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 700;
+        font-size: 15px;
+      }
+      .brand__dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 0 4px rgba(255, 184, 0, 0.16);
+        display: inline-block;
+      }
+      .icon-btn {
+        background: var(--surface);
+        color: var(--muted);
+        border: 1px solid var(--border-strong);
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        line-height: 1;
+        font-size: 14px;
+        cursor: pointer;
+      }
+      .icon-btn:hover {
+        color: var(--accent);
+        border-color: var(--accent);
+      }
+      .view-title {
+        margin: 0 0 7px;
+        font-size: 20px;
+        font-weight: 700;
+        line-height: 1.15;
+      }
+      label {
+        display: block;
+        margin: 12px 0 4px;
+        color: var(--muted);
+      }
+      input[type="password"] {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 1px solid var(--border-strong);
+        background: var(--surface);
+        color: var(--text);
+        font-family: var(--sans);
+        outline: none;
+      }
+      input[type="password"]:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(255, 184, 0, 0.16);
+      }
+      .row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 10px;
+      }
+      input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        flex: none;
+        width: 16px;
+        height: 16px;
+        margin: 0;
+        border: 1px solid var(--border-strong);
+        border-radius: 5px;
+        background: var(--surface);
+        cursor: pointer;
+        position: relative;
+        transition:
+          background 0.15s ease,
+          border-color 0.15s ease;
+      }
+      input[type="checkbox"]:hover {
+        border-color: var(--accent);
+      }
+      input[type="checkbox"]:checked {
+        background: var(--accent);
+        border-color: var(--accent);
+      }
+      input[type="checkbox"]:checked::after {
+        content: "";
+        position: absolute;
+        left: 5px;
+        top: 2px;
+        width: 3px;
+        height: 7px;
+        border: solid var(--on-accent);
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+      }
+      input[type="checkbox"]:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(255, 184, 0, 0.16);
+      }
+      button {
+        min-height: 38px;
+        padding: 8px 16px;
+        border-radius: 999px;
+        border: 1px solid var(--accent);
+        background: var(--accent);
+        color: var(--on-accent);
+        font-family: var(--sans);
+        font-weight: 600;
+        cursor: pointer;
+      }
+      button:hover {
+        filter: brightness(1.03);
+      }
+      .btn-ghost {
+        background: var(--surface);
+        color: var(--text);
+        border: 1px solid var(--border-strong);
+        width: 100%;
+        text-align: center;
+        box-shadow: var(--shadow);
+      }
+      .btn-ghost:hover {
+        border-color: var(--accent);
+      }
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      .ok {
+        color: var(--success);
+      }
+      .muted {
+        color: var(--muted);
+      }
+      [hidden] {
+        display: none !important;
+      }
+      .earnings {
+        display: flex;
+        gap: 10px;
+        margin-top: 14px;
+      }
+      .stat {
+        flex: 1;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-left: 4px solid var(--border-strong);
+        border-radius: 8px;
+        padding: 10px 12px;
+        box-shadow: var(--shadow);
+      }
+      .stat__label {
+        display: block;
+        color: var(--muted);
+        font-size: 11px;
+        margin-bottom: 2px;
+      }
+      .stat__value {
+        display: block;
+        font-size: 15px;
+        font-weight: 700;
+      }
+      .stat--available .stat__value {
+        color: var(--success);
+      }
+      .stat--available {
+        border-left-color: var(--success);
+      }
+      .hint {
+        margin-top: 14px;
+        color: var(--muted);
+        font-size: 11px;
+      }
+      .capped {
+        margin-top: 14px;
+        padding: 12px 14px;
+        border-radius: 10px;
+        background: var(--surface-alt);
+        border: 1px solid var(--border-strong);
+        border-left: 4px solid var(--accent);
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        box-shadow: var(--shadow);
+      }
+      .capped__label {
+        color: var(--text);
+        font-weight: 700;
+        font-size: 13px;
+      }
+      .capped__timer {
+        font-size: 24px;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+        letter-spacing: 1px;
+        color: var(--on-accent);
+      }
+      .capped__hint {
+        color: var(--muted);
+        font-size: 11px;
+      }
+      .sites-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 16px;
+        color: var(--muted);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0;
+      }
+      .btn-small {
+        padding: 4px 9px;
+        font-size: 11px;
+        min-height: 30px;
+      }
+      .sites {
+        margin-top: 8px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 7px 10px;
+        padding: 12px;
+        border-radius: 8px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+      }
+      .site-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin: 0;
+        color: var(--text);
+        font-size: 12px;
+      }
+      .toggles {
+        margin-top: 14px;
+        display: grid;
+        gap: 10px;
+      }
+      .toggle {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        margin: 0;
+        color: var(--text);
+        font-size: 12px;
+        line-height: 1.35;
+      }
+      .toggle input {
+        margin-top: 2px;
+      }
+      .settings-group {
+        margin-top: 16px;
+        padding: 12px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--surface-alt);
+      }
+      .settings-group__label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+      .btn-danger {
+        width: 100%;
+        margin-top: 10px;
+        color: var(--danger);
+        background: var(--danger-bg);
+        border-color: var(--danger);
+      }
+      .advanced {
+        margin-top: 16px;
+        border-top: 1px solid var(--border);
+        padding-top: 10px;
+      }
+      .advanced > summary {
+        color: var(--muted);
+        font-size: 12px;
+        cursor: pointer;
+        list-style: none;
+      }
+      .advanced > summary:hover {
+        color: var(--accent);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <div class="brand"><span class="brand__dot"></span> VibePerks</div>
+      <button
+        id="settings"
+        class="icon-btn"
+        title="Manage sites"
+        aria-label="Manage sites"
+        data-i18n-title="settingsTitle"
+        data-i18n-aria="settingsTitle"
+        hidden
+      >
+        &#9881;
+      </button>
+    </div>
+
+    <!-- View 1: Enable sites (first run) -->
+    <section id="view-sites" hidden>
+      <h1 id="sites-title" class="view-title">Enable Sites</h1>
+      <p class="hint" style="margin-top: 0" data-i18n="sitesIntro">
+        Pick which AI sites show a sponsor line while a response is generating.
+      </p>
+      <div class="sites-head">
+        <span data-i18n="aiSites">AI sites</span>
+        <button id="enableAll" class="btn-small" data-i18n="enableAll">Enable all</button>
+      </div>
+      <div id="sites" class="sites"></div>
+      <p class="hint" data-i18n="reloadHint">After enabling a site, reload that site's tab.</p>
+      <div class="toggles">
+        <label class="toggle">
+          <input id="optOut" type="checkbox" />
+          <span data-i18n="pauseLabel">Pause (stop showing sponsor lines)</span>
+        </label>
+      </div>
+      <div class="row">
+        <button id="sitesContinue" class="btn-ghost" data-i18n="goBack">Go back</button>
+      </div>
+      <button id="logout" class="btn-danger" data-i18n="logout" hidden>Log out</button>
+    </section>
+
+    <!-- View 2: Connect account (device token handed over by the website) -->
+    <section id="view-connect" hidden>
+      <button id="connect" style="width: 100%" data-i18n="signUp">Sign Up To Start</button>
+      <p id="connect-status" class="muted" data-i18n="connectHint">then click on Connect extension</p>
+    </section>
+
+    <!-- View 3: Mini dashboard -->
+    <section id="view-dashboard" hidden>
+      <p id="dash-status" class="ok" data-i18n="earning">Earning while you wait</p>
+
+      <div id="capped" class="capped" hidden>
+        <span class="capped__label" data-i18n="cappedLabel">Hourly limit reached</span>
+        <span id="capped-timer" class="capped__timer">--:--:--</span>
+        <span class="capped__hint" data-i18n="cappedHint">More ads unlock when the timer runs out.</span>
+      </div>
+
+      <div id="earnings" class="earnings" hidden>
+        <div class="stat stat--available">
+          <span class="stat__label" data-i18n="available">Available</span>
+          <span id="available" class="stat__value">-</span>
+        </div>
+      </div>
+
+      <div class="row">
+        <button id="dashboard" class="btn-ghost" data-i18n="goToDashboard">Go to Dashboard</button>
+      </div>
+
+      <p class="hint" data-i18n="privacyHint">100% private, prompts never get sent.</p>
+    </section>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

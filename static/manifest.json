@@ -1,0 +1,45 @@
+{
+  "manifest_version": 3,
+  "name": "VibePerks - Make your AI pay for itself",
+  "version": "1.0.0",
+  "description": "Make your AI pay for itself. Earn rewards while AI tools think - a quiet sponsor line appears only while a response is generating.",
+  "permissions": ["storage", "scripting"],
+  "host_permissions": ["__API_BASE__/*", "__SITE_BASE__/*"],
+  "optional_host_permissions": [
+    "https://chatgpt.com/*",
+    "https://chat.openai.com/*",
+    "https://claude.ai/*",
+    "https://*.perplexity.ai/*",
+    "https://gemini.google.com/*",
+    "https://chat.mistral.ai/*",
+    "https://copilot.microsoft.com/*",
+    "https://chat.deepseek.com/*",
+    "https://grok.com/*",
+    "https://lovable.dev/*",
+    "https://v0.dev/*",
+    "https://v0.app/*",
+    "https://bolt.new/*"
+  ],
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "externally_connectable": {
+    "matches": ["__SITE_BASE__/*"]
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "VibePerks",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  }
+}
