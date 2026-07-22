@@ -1,0 +1,85 @@
+name: Release Chrome extension
+
+# Builds the MV3 extension, stamps a monotonic version, and publishes it to the
+# Chrome Web Store (which then auto-updates every installed user). It also attaches
+# the packaged .zip to the moving "latest" GitHub Release as a sideload fallback.
+#
+# This workflow lives at the root of the public VibePerks/chrome repo, into which
+# plugin/chrome/ is mirrored by the monorepo's scripts/git-push-main.ps1. It is
+# dormant inside the monorepo (only root-level .github/workflows run there).
+on:
+  # Dispatch-only: triggered by the monorepo CI/CD release-plugins job after the
+  # full test gate passes, so an untested mirror push can never publish.
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test
+        run: npm test
+
+      - name: Build unpacked extension
+        run: npm run build
+
+      # The Chrome Web Store rejects an upload whose manifest version is not greater
+      # than the currently published one. Stamp a monotonic version derived from the
+      # run number (never committed, so dev/main mirrors never conflict), mirroring
+      # the Go adapters' dev-stamping approach.
+      - name: Stamp a monotonic version
+        id: ver
+        run: |
+          VERSION="0.1.${{ github.run_number }}"
+          node -e "const fs=require('fs');const f='dist/manifest.json';const m=JSON.parse(fs.readFileSync(f,'utf8'));m.version=process.env.VERSION;fs.writeFileSync(f, JSON.stringify(m, null, 2) + '\n');"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+        env:
+          VERSION: 0.1.${{ github.run_number }}
+
+      - name: Package the extension zip
+        run: |
+          cd dist
+          zip -r ../vibeperks-chrome.zip .
+
+      # Uploads a new draft version and publishes it for review. Requires the CWS
+      # API credentials (a Google OAuth client + refresh token authorized for the
+      # Chrome Web Store API) and the target item id, set as repo secrets.
+      - name: Upload + publish to the Chrome Web Store
+        uses: mnao305/chrome-extension-upload@v5.0.0
+        with:
+          file-path: vibeperks-chrome.zip
+          extension-id: ${{ secrets.CWS_EXTENSION_ID }}
+          client-id: ${{ secrets.CWS_CLIENT_ID }}
+          client-secret: ${{ secrets.CWS_CLIENT_SECRET }}
+          refresh-token: ${{ secrets.CWS_REFRESH_TOKEN }}
+          publish: true
+
+      # Move the "latest" tag to this commit so the Release's version text, source
+      # archives, and the .zip asset all point at the same commit (softprops updates
+      # assets in place but never re-points an existing tag).
+      - name: Move the "latest" tag to this commit
+        run: |
+          git tag -f latest HEAD
+          git push -f origin refs/tags/latest
+
+      - name: Publish zip to the "latest" GitHub Release (sideload fallback)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: Latest build
+          make_latest: true
+          files: vibeperks-chrome.zip
