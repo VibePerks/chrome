@@ -3,16 +3,16 @@ import { chooseView } from "../src/popup/router"
 
 describe("popup router", () => {
   it("routes to the enable-sites view when no site is enabled", () => {
-    expect(chooseView({ anySiteEnabled: false, hasToken: false })).toBe("sites")
-    // No sites always wins, even if a token is already stored.
-    expect(chooseView({ anySiteEnabled: false, hasToken: true })).toBe("sites")
+    expect(chooseView({ anySiteEnabled: false, connected: false })).toBe("sites")
+    // No sites always wins, even if already connected.
+    expect(chooseView({ anySiteEnabled: false, connected: true })).toBe("sites")
   })
 
-  it("routes to the token view when sites are enabled but no token", () => {
-    expect(chooseView({ anySiteEnabled: true, hasToken: false })).toBe("token")
+  it("routes to the connect view when sites are enabled but not connected", () => {
+    expect(chooseView({ anySiteEnabled: true, connected: false })).toBe("connect")
   })
 
-  it("routes to the dashboard when sites are enabled and a token exists", () => {
-    expect(chooseView({ anySiteEnabled: true, hasToken: true })).toBe("dashboard")
+  it("routes to the dashboard when sites are enabled and connected", () => {
+    expect(chooseView({ anySiteEnabled: true, connected: true })).toBe("dashboard")
   })
 })
